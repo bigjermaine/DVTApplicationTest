@@ -15,15 +15,12 @@ struct TabbarView: View {
                     Label("Home", systemImage: "house")
                 }
 
+          
             FavouriteView()
                 .tabItem {
                     Label("Favourites", systemImage: "star")
                 }
 
-            FavouriteView()
-                .tabItem {
-                    Label("Favourites", systemImage: "star")
-                }
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
