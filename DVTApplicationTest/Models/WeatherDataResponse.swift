@@ -192,6 +192,7 @@ extension Array where Element == WeatherData {
        
         return summaries
             .sorted { $0.date < $1.date }
+            .suffix(5)
             .map { $0.forecast }
     }
 }

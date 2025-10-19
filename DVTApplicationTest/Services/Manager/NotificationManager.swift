@@ -14,8 +14,7 @@ final class NotificationManager: ObservableObject {
             await requestAuthorization()
         }
     }
-     
-   
+
     func requestAuthorization(options: UNAuthorizationOptions = [.alert, .badge, .sound]) async -> Bool {
         let center = UNUserNotificationCenter.current()
         do {
@@ -29,7 +28,6 @@ final class NotificationManager: ObservableObject {
         }
     }
 
-    
     func currentSettings() async -> UNNotificationSettings {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
@@ -37,23 +35,33 @@ final class NotificationManager: ObservableObject {
         return settings
     }
 
-  
-    func scheduleLocalNotification(
-        identifier: String = UUID().uuidString,
-        title: String,
-        body: String,
-        timeInterval: TimeInterval,
-        repeats: Bool = false
-    ) async throws {
+    func scheduleDailyWeatherReminder(hour: Int = 8, minute: Int = 0) async throws {
+        let center = UNUserNotificationCenter.current()
+        let pending = await center.pendingNotificationRequests()
+
+        // Prevent duplicates
+        if pending.contains(where: { $0.identifier == "daily_weather_reminder" }) {
+            return
+        }
+
         let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
+        content.title = " Daily Weather Update"
+        content.body = "Check your app for today's weather forecast."
         content.sound = .default
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, timeInterval), repeats: repeats)
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        var dateComponents = DateComponents()
+        dateComponents.hour = hour
+        dateComponents.minute = minute
 
-        try await UNUserNotificationCenter.current().add(request)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let request = UNNotificationRequest(
+            identifier: "daily_weather_reminder",
+            content: content,
+            trigger: trigger
+        )
+
+        try await center.add(request)
+        print("✅ Daily weather reminder scheduled at \(hour):\(String(format: "%02d", minute))")
     }
 
   

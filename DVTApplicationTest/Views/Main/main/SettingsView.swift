@@ -14,7 +14,7 @@ struct SettingsView: View {
    
     @AppStorage(SettingsKeys.hapticsEnabled) private var hapticsEnabled: Bool = false
     @AppStorage(SettingsKeys.designStyle) private var designStyle: String = DesignStyle.system.rawValue
-    @AppStorage(SettingsKeys.soundEnabled) private var soundEnabled: Bool = true
+    @AppStorage(SettingsKeys.soundEnabled) private var soundEnabled: Bool = false
     @EnvironmentObject var vm: WeatherManagerViewModel
     @State private var notificationsEnabled: Bool = false
     @State private var notificationAuthStatus: UNAuthorizationStatus = .notDetermined
@@ -112,6 +112,11 @@ struct SettingsView: View {
         let settings = await notificationManager.currentSettings()
         notificationAuthStatus = settings.authorizationStatus
         notificationsEnabled = (settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional || settings.authorizationStatus == .ephemeral)
+        if notificationsEnabled {
+           
+        try? await NotificationManager.shared.scheduleDailyWeatherReminder()
+             
+        }
         isLoadingNotificationStatus = false
     }
 
