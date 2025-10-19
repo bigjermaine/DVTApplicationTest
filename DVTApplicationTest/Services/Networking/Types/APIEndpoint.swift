@@ -15,7 +15,7 @@ enum ApiEndpoint {
 }
 
 
-// MARK: - Request Construction
+
 extension ApiEndpoint {
     func request(accessToken: String? = nil) throws -> URLRequest {
         guard let url = url else {

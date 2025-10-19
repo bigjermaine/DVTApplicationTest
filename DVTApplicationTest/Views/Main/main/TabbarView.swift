@@ -15,26 +15,43 @@ struct TabbarView: View {
     var body: some View {
         TabView {
             HomeView()
-                .environmentObject(weatherManagerViewModel)
+                .tabTapFeedback() 
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-
-          
+               
             FavouriteView()
+                .tabTapFeedback()
                 .tabItem {
                     Label("Favourites", systemImage: "star")
                 }
 
             SettingsView()
+                .tabTapFeedback()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
         }
-        
+        .environmentObject(weatherManagerViewModel)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarBackground(Color.black, for: .tabBar)  
     }
+    
 }
 
 #Preview {
     TabbarView()
 }
+
+struct TapFeedbackModifier: ViewModifier {
+       func body(content: Content) -> some View {
+           content.onAppear {
+               HapticManager.shared.vibrateForSelection()
+               SoundManager.shared.playTap()
+           }
+       }
+   }
+
+   extension View {
+       func tabTapFeedback() -> some View { modifier(TapFeedbackModifier()) }
+   }

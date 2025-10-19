@@ -13,14 +13,14 @@ import UIKit
 @MainActor
 
 final class LocationManager: NSObject, ObservableObject {
-    // MARK: - Published State
+
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var lastKnownLocation: CLLocation? = nil
     @Published var errorMessage: String? = nil
     @Published var isRequestInFlight: Bool = false
     @Published var allowsBackgroundUpdates: Bool = true
 
-    // MARK: - Callbacks
+
     var onAuthorizationChange: ((CLAuthorizationStatus) -> Void)?
     var onLocationUpdate: ((CLLocation) -> Void)?
     var onError: ((String) -> Void)?
@@ -36,7 +36,7 @@ final class LocationManager: NSObject, ObservableObject {
       
     }
 
-    // MARK: - Callback configuration
+   
     func configureCallbacks(
         onAuthorizationChange: ((CLAuthorizationStatus) -> Void)? = nil,
         onLocationUpdate: ((CLLocation) -> Void)? = nil,
@@ -104,7 +104,7 @@ final class LocationManager: NSObject, ObservableObject {
 
    
 
-    // MARK: - Standard (continuous) location updates
+
     func startUpdatingLocation(background: Bool = false) {
         errorMessage = nil
         allowsBackgroundUpdates = background
@@ -136,7 +136,7 @@ final class LocationManager: NSObject, ObservableObject {
     }
 }
 
-// MARK: - CLLocationManagerDelegate
+
 extension LocationManager: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorizationStatus = manager.authorizationStatus

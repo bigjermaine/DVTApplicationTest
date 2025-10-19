@@ -11,7 +11,7 @@ import SwiftUI
 
 final class APIClient: APIService {
     static let shared = APIClient()
-    // MARK: - Properties
+
     init() {
         
     }
@@ -21,7 +21,7 @@ final class APIClient: APIService {
     }
     
     func getWeatherDatas(lat: Int, log: Int) async throws  -> Result < ForecastResponse , ErrorResponse>{
-        try await  request(.getWeatherForcastData(lat: lat, log: log))
+        try await  request(.getWeatherForcastDatas(lat: lat, log: log))
     }
     
 

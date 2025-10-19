@@ -8,15 +8,12 @@
 
 import Foundation
 
-// MARK: - ForecastResponse
 struct ForecastResponse: Codable {
-    let cod: String
-    let message: Int
-    let cnt: Int
+    let message: Int?
+    let cnt: Int?
     let list: [WeatherData]
-    let city: City
+    let city: City?
 }
-
 
 
 // MARK: - Rain3h
@@ -30,6 +27,6 @@ struct Rain3h: Codable {
 
 // MARK: - ForecastSys
 struct ForecastSys: Codable {
-    let pod: String
+    let pod: String?
 }
 
