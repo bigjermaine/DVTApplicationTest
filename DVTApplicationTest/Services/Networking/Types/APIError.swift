@@ -32,3 +32,20 @@ enum APIError: Error, LocalizedError {
         }
     }
 }
+
+struct ErrorResponse: Codable, Error {
+    var error: String?
+    var errorDescription: String?
+    var errorUri: String?
+    var twoFactorToken: String?
+    var userId: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case error
+        case errorDescription = "error_description"
+        case errorUri = "error_uri"
+        case twoFactorToken = "twoFactorToken"
+        case userId = "userId"
+    }
+}
+

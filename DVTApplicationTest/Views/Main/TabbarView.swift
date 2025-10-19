@@ -8,9 +8,14 @@
 import SwiftUI
 
 struct TabbarView: View {
+    @StateObject var weatherManagerViewModel = WeatherManagerViewModel(
+        weatherManager: .init(apiService: APIClient.shared),
+        locationManager: .init()
+    )
     var body: some View {
         TabView {
             HomeView()
+                .environmentObject(weatherManagerViewModel)
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
@@ -26,6 +31,7 @@ struct TabbarView: View {
                     Label("Settings", systemImage: "gear")
                 }
         }
+        
     }
 }
 

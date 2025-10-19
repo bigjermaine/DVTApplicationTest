@@ -15,4 +15,19 @@ extension APIEnvironment {
         "api.openweathermap.org"
     }
     
+    
+}
+extension APIEnvironment {
+    
+    // MARK: - Authentication Endpoints
+    
+    static var  getWeatherData: String {
+       return "/data/2.5/weather"
+    }
+    
+    static var getWeatherDatas: String {
+        "/data/2.5/forecast"
+    }
+    
+    
 }
