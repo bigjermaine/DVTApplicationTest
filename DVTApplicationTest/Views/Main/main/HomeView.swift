@@ -8,6 +8,8 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var vm: WeatherManagerViewModel
+    @EnvironmentObject var favoritesStoreViewModel:FavoritesStoreViewModel
+    
     
     var body: some View {
         ZStack {
@@ -32,6 +34,8 @@ struct HomeView: View {
                                 .font(.title3.weight(.semibold))
                                 .kerning(2)
                         }
+                        
+                       
                     }
                     .frame(maxWidth: .infinity, maxHeight: proxy.size.height / 1.5)
                 }
@@ -76,6 +80,34 @@ struct HomeView: View {
                     .scrollContentBackground(.hidden)
                     .background(vm.weatherType.color)
                     .clipped()
+                    
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                if favoritesStoreViewModel.isFavorite(lat: vm.getFavourite().lat, log:  vm.getFavourite().log) {
+                                    favoritesStoreViewModel.setCurrentFavorite(nil)
+                                   favoritesStoreViewModel.removeFavorite(lat: vm.getFavourite().lat, long:  vm.getFavourite().log)
+                                } else {
+                                    favoritesStoreViewModel.setCurrentFavorite(vm.getFavourite())
+                                    favoritesStoreViewModel.addFavorite(vm.getFavourite())
+                                  
+                                }
+                                
+                            }) {
+                                Image(systemName:  favoritesStoreViewModel.isFavorite(lat: vm.getFavourite().lat, log:  vm.getFavourite().log) ? "heart.fill" : "heart")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundStyle( favoritesStoreViewModel.isFavorite(lat: vm.getFavourite().lat, log:  vm.getFavourite().log) ? .red : .white)
+                                    .padding(10)
+                                    .background(.ultraThinMaterial, in: Circle())
+                            }
+                            .padding(.top, 12)
+                            .padding(.trailing, 12)
+                            .tabTapFeedback()
+                        }
+                      
+                    }
+                    .frame(maxHeight: 20)
                 }
             }
         }
@@ -88,4 +120,5 @@ let previewWeatherManagerViewModel = WeatherManagerViewModel(weatherManager: .in
 #Preview {
     HomeView()
         .environmentObject(previewWeatherManagerViewModel)
+        .environmentObject(FavoritesStoreViewModel())
 }

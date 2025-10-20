@@ -12,6 +12,7 @@ struct TabbarView: View {
         weatherManager: .init(apiService: APIClient.shared),
         locationManager: .init()
     )
+    @StateObject var favoritesStoreViewModel = FavoritesStoreViewModel()
     var body: some View {
         TabView {
             HomeView()
@@ -33,6 +34,7 @@ struct TabbarView: View {
                 }
         }
         .environmentObject(weatherManagerViewModel)
+        .environmentObject(favoritesStoreViewModel)
         .toolbarBackground(.visible, for: .tabBar)
         .toolbarBackground(Color.black, for: .tabBar)  
     }

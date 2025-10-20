@@ -19,7 +19,8 @@ class WeatherManagerViewModel: ObservableObject {
     @Published var currentWeather: WeatherData? = nil
     @Published var dailyForecasts: [DailyForecast] = []
     @Published var weatherType:WeatherType = .none
-    
+    @Published var latitude:Int = 0
+    @Published var longitude:Int = 0
     // MARK: - Dependencies
     private let weatherManager: WeatherManager
     private let locationManager: LocationManager
@@ -34,7 +35,18 @@ class WeatherManagerViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.dailyForecasts = $0 }
             .store(in: &cancellables)
+        
         requestLocationAndLoadWeatherOrFallback()
+    }
+    
+    
+    
+    
+    
+    
+    
+    func getFavourite() -> FavoriteLocation {
+        return FavoriteLocation(temp: (currentWeather?.feelsLikeCelsius ?? currentWeather?.maxCelsius) ?? 0 , lat:Double(latitude) ,log: Double(longitude), weatherType: weatherType)
     }
     
     func requestLocationAndLoadWeatherOrFallback() {
@@ -70,6 +82,8 @@ class WeatherManagerViewModel: ObservableObject {
     func handleLocationUpdate(_ location: CLLocation) {
         let lat = Int(location.coordinate.latitude)
         let log = Int(location.coordinate.longitude)
+        latitude = lat
+        longitude = log
         Task { await self.load(lat: lat, log: log) }
     }
     
@@ -88,6 +102,7 @@ class WeatherManagerViewModel: ObservableObject {
     }
     
     func load(lat: Int, log: Int) async {
+      
         errorMessage = nil
         isLoading = true
         
