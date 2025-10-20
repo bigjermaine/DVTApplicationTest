@@ -10,7 +10,7 @@ Features
     * UserDefaults: For simple key-value storage like favourite weather
     * Core Data: For relational data persistence (e.g., Todo items with attributes like title, completion status, and creation date).
 * iOS 17+ Features: Leverages SwiftUI's improved navigation (e.g., NavigationStack), async/await for data operations, and @Observable for ViewModel reactivity.
-* No External Dependencies: Pure Apple ecosystem—easy to build and maintain.
+* No External Dependencies: Pure Apple ecosystem easy to build and maintain.
 * Unit Tests: Basic tests for WeatherStateStorageManager
 Architecture Overview
 Model (M)
