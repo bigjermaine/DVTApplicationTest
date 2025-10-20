@@ -9,7 +9,7 @@ import SwiftUI
 
 
 
-final class WeatherManager {
+ class WeatherManager {
     
     private let apiService: APIService
     
