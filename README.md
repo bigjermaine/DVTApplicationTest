@@ -1,54 +1,55 @@
-DVTApplicationTest App
-
-￼
-A simple iOS app demonstrating the MVVM (Model-View-ViewModel) architecture using SwiftUI. This project uses UserDefaults for lightweight, ephemeral local storage and Core Data for persistent data management for storing app entities. No third-party SDKs or dependencies are used everything is built with native Apple frameworks.
-
+DVTApplicationTest
+A lightweight iOS application for weather update built with SwiftUI to demonstrate the MVVM (Model–View–ViewModel) architectural pattern.
+It showcases best practices in reactive data binding, persistence, and Swift concurrency using native Apple frameworks — no third-party dependencies.
+Overview
+This project emphasizes clean architecture and modern SwiftUI techniques for iOS 17 and above.
+It integrates UserDefaults for quick, transient data (e.g., favorites) and Core Data for structured, persistent storage of entities.
 Features
-* MVVM Architecture: Clean separation of concerns with Models (data entities), Views (SwiftUI UI), and ViewModels (business logic and data binding).
-* SwiftUI UI: Modern, declarative UI with lists, forms, and navigation.
-* Local Storage:
-    * UserDefaults: For simple key-value storage like favourite weather
-    * Core Data: For relational data persistence (e.g., Todo items with attributes like title, completion status, and creation date).
-* iOS 17+ Features: Leverages SwiftUI's improved navigation (e.g., NavigationStack), async/await for data operations, and @Observable for ViewModel reactivity.
-* No External Dependencies: Pure Apple ecosystem easy to build and maintain.
-* Unit Tests: Basic tests for WeatherStateStorageManager
-Architecture Overview
-Model (M)
-* Defines data structures (e.g., TodoItem entity in Core Data).
-* Core Data model: Single entity Todo with attributes (id: UUID, title: String, isCompleted: Bool, createdAt: Date).
-View (V)
-* SwiftUI views: ContentView (main list), AddTodoView (form), TodoDetailView (edit).
-* Binds to ViewModel using @StateObject and @ObservedObject.
-ViewModel (VM)
-* Handles logic: Fetching/saving from Core Data, updating UserDefaults.
-* Uses @Observable (iOS 17+) for automatic UI updates.
-* Async operations for Core Data (e.g., saveTodo() with await).
-Data Flow
-1. View loads → Binds to ViewModel.
-2. ViewModel fetches data from Core Data → Exposes @Published arrays/observables.
-3. User interacts → ViewModel updates Model (Core Data) or UserDefaults.
-4. Changes propagate back to View via bindings.
-
-Requirements
-* iOS: 17.0 or later
-* Xcode: 15.0 or later
-* Swift: 5.9+
-* Deployment Target: iOS 17.0
-* No additional SDKs required.
+MVVM Architecture — Clear separation of concerns between:
+Model: Defines entities and Core Data schemas.
+ViewModel: Manages app logic, persistence, and state updates.
+View: Declarative SwiftUI UI bound to observable state.
+SwiftUI Interface
+Built entirely with SwiftUI components (lists, forms, navigation).
+Uses NavigationStack, async/await, and @Observable for reactive updates.
+Local Data Storage
+UserDefaults: For simple key-value persistence such as favorite weather states.
+Core Data: For storing structured data and managing entity relationships.
+Modern iOS 17 APIs
+Swift Concurrency (async/await)
+New @Observable property wrapper for real-time UI updates.
+Native navigation with NavigationStack.
+No External SDKs
+100% native Swift and Apple frameworks for maximum maintainability and portability.
+Unit Tests
+Includes tests for WeatherStateStorageManager to validate data persistence and retrieval logic.
+Architecture Diagram
+Data Flow:
+View initializes and binds to a ViewModel instance.
+ViewModel fetches or saves data through Core Data or UserDefaults.
+User interactions trigger state changes in ViewModel.
+Updated data automatically reflects in the View via SwiftUI bindings.
+Technical Requirements
+Tool	Version
+iOS	17.0+
+Xcode	15.0+
+Swift	5.9+
+No additional frameworks or SDKs are required.
 Installation
-1. Clone the Repo git clone https://github.com/yourusername/mvvm-swiftui-example.git ](https://github.com/bigjermaine/DVTApplicationTest
-2. Open in Xcode:
-    * Launch MVVMExample.xcodeproj.
-    * Select your iOS 17+ simulator or device.
-3. Build & Run:
-    * Press Cmd + R to build and run.
-    * Grant Core Data permissions if prompted (automatic on simulator).
-4. Core Data Setup (One-Time):
-    * In Xcode, go to Editor > Create NSManagedObject Subclass for the Todo entity.
-    * Ensure the persistent container is configured in App.swift or your root view.
+Clone the repository
+git clone https://github.com/bigjermaine/DVTApplicationTest.git
+Open the project
+Launch DVTApplicationTest.xcodeproj in Xcode.
+Select an iOS 17+ device or simulator.
+Build & Run
+Press ⌘ + R to compile and run the app.
+Core Data permissions are automatically handled in the simulator.
+Core Data Setup (optional)
+Use Editor → Create NSManagedObject Subclass for any new entities.
+Ensure the persistent container is initialized in App.swift.
 Usage
-1. Launch the App: See accept location alert
-2. You can change sound from settings,haptic effects and background
-3. change different locations on simulator to see the different temperature and degrees
-4. add to favourite by clicking on the heart botton 
-5. store offline data also 
+Launch the app and allow Location Access.
+Switch simulator locations to observe weather data updates.
+Tap the heart icon to add a location to favorites (stored via UserDefaults).
+Modify settings to toggle sound, haptics, and background options.
+View offline-stored weather data when network access is unavailable.
