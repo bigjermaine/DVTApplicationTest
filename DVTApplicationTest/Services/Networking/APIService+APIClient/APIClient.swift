@@ -54,11 +54,11 @@ extension APIClient {
         
         // MARK: - 2. Debug logging
         #if DEBUG
-        print("➡️ [\(endpoint)] STATUS: \(statusCode)")
+      
         if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers) {
-            print("🧾 JSON Response:", json)
+          
         } else {
-            print("⚠️ Failed to serialize JSON response")
+          
         }
         #endif
         
