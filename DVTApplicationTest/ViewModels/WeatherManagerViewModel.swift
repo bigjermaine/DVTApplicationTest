@@ -26,24 +26,27 @@ class WeatherManagerViewModel: ObservableObject {
     private let locationManager: LocationManager
     private let coreDataVM: CoreDataWeatherViewModel =  CoreDataWeatherViewModel()
     private var cancellables = Set<AnyCancellable>()
-    
+    let persistence = WeatherStateStorage()
     init(weatherManager: WeatherManager, locationManager: LocationManager) {
         self.weatherManager = weatherManager
         self.locationManager = locationManager
         self.dailyForecasts = coreDataVM.dailyForecasts
+        getCache()
+      
+    }
+    func getCache() {
         coreDataVM.$dailyForecasts
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.dailyForecasts = $0 }
             .store(in: &cancellables)
         
+        let initial = persistence.loadInitialState()
+        self.weatherType = initial.weatherType ?? .none
+        if let savedCurrent = initial.currentWeather {
+            self.currentWeather = savedCurrent
+        }
         requestLocationAndLoadWeatherOrFallback()
     }
-    
-    
-    
-    
-    
-    
     
     func getFavourite() -> FavoriteLocation {
         return FavoriteLocation(temp: (currentWeather?.feelsLikeCelsius ?? currentWeather?.maxCelsius) ?? 0 , lat:Double(latitude) ,log: Double(longitude), weatherType: weatherType)
@@ -119,7 +122,6 @@ class WeatherManagerViewModel: ObservableObject {
             
         } catch {
             errorMessage = Self.humanReadable(error)
-            currentWeather = nil
     
         }
         
@@ -166,6 +168,11 @@ class WeatherManagerViewModel: ObservableObject {
         }else {
             weatherType =  .sunny
         }
+        persistence.saveWeatherType(weatherType)
+        if let currentWeather = currentWeather {
+            persistence.saveCurrentWeather(currentWeather)
+        }
+      
     }
     
     
