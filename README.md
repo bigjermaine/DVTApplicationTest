@@ -1,13 +1,13 @@
 DVTApplicationTest App
 
 ￼
-A simple iOS app demonstrating the MVVM (Model-View-ViewModel) architecture using SwiftUI. This project uses UserDefaults for lightweight, ephemeral local storage (e.g., user preferences) and Core Data for persistent data management (e.g., storing app entities like tasks or notes). No third-party SDKs or dependencies are used—everything is built with native Apple frameworks.
-The app is a basic Todo List example where users can add, edit, delete, and mark tasks as complete. Tasks are persisted via Core Data, while app settings (e.g., theme preference) are stored in UserDefaults.
+A simple iOS app demonstrating the MVVM (Model-View-ViewModel) architecture using SwiftUI. This project uses UserDefaults for lightweight, ephemeral local storage and Core Data for persistent data management for storing app entities. No third-party SDKs or dependencies are used everything is built with native Apple frameworks.
+
 Features
 * MVVM Architecture: Clean separation of concerns with Models (data entities), Views (SwiftUI UI), and ViewModels (business logic and data binding).
 * SwiftUI UI: Modern, declarative UI with lists, forms, and navigation.
 * Local Storage:
-    * UserDefaults: For simple key-value storage (e.g., dark mode toggle, last sync time).
+    * UserDefaults: For simple key-value storage like favourite weather
     * Core Data: For relational data persistence (e.g., Todo items with attributes like title, completion status, and creation date).
 * iOS 17+ Features: Leverages SwiftUI's improved navigation (e.g., NavigationStack), async/await for data operations, and @Observable for ViewModel reactivity.
 * No External Dependencies: Pure Apple ecosystem—easy to build and maintain.
@@ -49,5 +49,6 @@ Installation
 Usage
 1. Launch the App: See accept location alert
 2. You can change sound from settings,haptic effects and background
-3. change different locations on simulator to see the different temperature and degrees 
-4. store offline data also 
+3. change different locations on simulator to see the different temperature and degrees
+4. add to favourite by clicking on the heart botton 
+5. store offline data also 
