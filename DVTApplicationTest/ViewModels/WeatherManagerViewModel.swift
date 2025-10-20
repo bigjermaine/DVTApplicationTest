@@ -140,17 +140,6 @@ class WeatherManagerViewModel: ObservableObject {
         isLoading = false
     }
     
-    func refreshForecast(lat: Int, log: Int) async {
-        errorMessage = nil
-        isLoading = true
-        do {
-            let data = try await weatherManager.fetchForecast(lat: lat, log: log)
-            
-        } catch {
-            errorMessage = Self.humanReadable(error)
-        }
-        isLoading = false
-    }
     
     @MainActor
     func determineWeatherType(from item: WeatherData)  {
