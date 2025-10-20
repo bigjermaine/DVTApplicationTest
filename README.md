@@ -52,6 +52,13 @@ Installation
 5. Core Data Setup (optional)
     * Use Editor → Create NSManagedObject Subclass for any new entities.
     * Ensure the persistent container is initialized in App.swift.
+  
+Branching Strategy
+Uses three Git branches to demonstrate branching workflows:
+dev → Active development branch for ongoing features and experiments.
+staging → Pre-production branch for QA and integration testing.
+main → Stable, production-ready code.
+This setup reflects best practices for collaborative version control and continuous integration.
 
 Usage
 1. Launch the app and allow Location Access.
