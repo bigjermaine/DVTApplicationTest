@@ -16,7 +16,6 @@ final class WeatherStateStorageTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // Use a test-specific UserDefaults suite to isolate tests
         testUserDefaults = UserDefaults(suiteName: "WeatherStateStorageTests")!
         sut = WeatherStateStorage()
         

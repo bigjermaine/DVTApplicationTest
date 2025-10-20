@@ -61,7 +61,7 @@ final class NotificationManager: ObservableObject {
         )
 
         try await center.add(request)
-        print("✅ Daily weather reminder scheduled at \(hour):\(String(format: "%02d", minute))")
+       
     }
 
   
