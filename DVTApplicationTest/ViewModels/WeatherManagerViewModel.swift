@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 import CoreLocation
-
+import CoreData
 
 
 @MainActor
@@ -18,19 +18,23 @@ class WeatherManagerViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var currentWeather: WeatherData? = nil
     @Published var dailyForecasts: [DailyForecast] = []
-    @Published var forecast: ForecastResponse? = nil
     @Published var weatherType:WeatherType = .none
+    
     // MARK: - Dependencies
     private let weatherManager: WeatherManager
     private let locationManager: LocationManager
-    let apiService: APIService =  APIClient()
+    private let coreDataVM: CoreDataWeatherViewModel =  CoreDataWeatherViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     init(weatherManager: WeatherManager, locationManager: LocationManager) {
         self.weatherManager = weatherManager
         self.locationManager = locationManager
+        self.dailyForecasts = coreDataVM.dailyForecasts
+        coreDataVM.$dailyForecasts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.dailyForecasts = $0 }
+            .store(in: &cancellables)
         requestLocationAndLoadWeatherOrFallback()
-        
-        
     }
     
     func requestLocationAndLoadWeatherOrFallback() {
@@ -84,7 +88,6 @@ class WeatherManagerViewModel: ObservableObject {
     }
     
     func load(lat: Int, log: Int) async {
-        
         errorMessage = nil
         isLoading = true
         
@@ -95,13 +98,14 @@ class WeatherManagerViewModel: ObservableObject {
             let (x, y) = try await (currentTask, forecastTask)
             currentWeather = x
             determineWeatherType(from: x)
-            dailyForecasts = y.list.nextFiveDays(timezoneOffsetSeconds: y.city?.timezone ?? 0)
-            forecast = y
+            let nextFive = y.list.nextFiveDays(timezoneOffsetSeconds: y.city?.timezone ?? 0)
+            dailyForecasts = nextFive
+            coreDataVM.replaceAllSavedForecasts(with: nextFive)
             
         } catch {
             errorMessage = Self.humanReadable(error)
             currentWeather = nil
-            forecast = nil
+    
         }
         
         isLoading = false
@@ -124,7 +128,7 @@ class WeatherManagerViewModel: ObservableObject {
         isLoading = true
         do {
             let data = try await weatherManager.fetchForecast(lat: lat, log: log)
-            forecast = data
+            
         } catch {
             errorMessage = Self.humanReadable(error)
         }
@@ -166,3 +170,4 @@ class WeatherManagerViewModel: ObservableObject {
         return error.localizedDescription.isEmpty ? "Something went wrong. Please try again." : error.localizedDescription
     }
 }
+

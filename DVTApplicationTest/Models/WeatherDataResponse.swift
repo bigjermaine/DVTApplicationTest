@@ -185,11 +185,14 @@ extension Array where Element == WeatherData {
             df.timeZone = tz
             df.dateFormat = "EEEE"
             let weekday = df.string(from: date)
-
+            
             return (date, DailyForecast(day: weekday, minTemp: Int(minTemp), maxTemp: Int(maxTemp), icon: icon))
         }
 
-       
+       print(summaries
+        .sorted { $0.date < $1.date }
+        .suffix(5)
+        .map { $0.forecast })
         return summaries
             .sorted { $0.date < $1.date }
             .suffix(5)
