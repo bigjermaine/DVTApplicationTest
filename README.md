@@ -33,12 +33,19 @@ Data Flow:
 3. User interactions trigger state changes in ViewModel.
 4. Updated data automatically reflects in the View via SwiftUI bindings.
 
+Additional Features 
+1) Haptic effects
+2) sound settings
+3) background change to forest or sea 
+
 Technical Requirements
 Tool	Version
 iOS	17.0+
 Xcode	15.0+
 Swift	5.9+
 No additional frameworks or SDKs are required.
+
+
 
 Installation
 1. Clone the repository    git clone https://github.com/bigjermaine/DVTApplicationTest.git
