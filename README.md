@@ -1,8 +1,10 @@
 DVTApplicationTest
-A lightweight iOS application built with SwiftUI to demonstrate the MVVM (Model–View–ViewModel) architectural pattern. It showcases best practices in reactive data binding, persistence, and Swift concurrency using native Apple frameworks— no third-party dependencies.
+A lightweight iOS application built with SwiftUI to demonstrate the MVVM (Model–View–ViewModel) architectural pattern. It showcases best practices in reactive data binding, persistence, and Swift concurrency using native Apple frameworks.
+
+no third-party dependencies.
 
 Overview
-This project emphasizes clean architecture and modern SwiftUI techniques for iOS 17 and above. It integrates UserDefaults for quick, transient data (e.g., favorites) and Core Data for structured, persistent storage of entities.
+This project emphasizes clean architecture and modern SwiftUI techniques for iOS 17 and above. It integrates UserDefaults for quick, transient data (e.g favorites) and Core Data for structured, persistent storage of entities.
 
 Features
 * MVVM Architecture — Clear separation of concerns between:
