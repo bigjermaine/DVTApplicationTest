@@ -65,7 +65,10 @@ Usage
 2. Switch simulator locations to observe weather data updates.
 3. Tap the heart icon to add a location to favorites (stored via UserDefaults).
 4. Modify settings to toggle sound, haptics, and background options.
-5. View offline-stored weather data when network access is unavailable.<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-20 at 16 12 28" src="https://github.com/user-attachments/assets/e4ed0d61-220b-46a6-bc16-b4e36cb7e2e5" />
+5. View offline-stored weather data when network access is unavailable
+
+
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-20 at 16 12 28" src="https://github.com/user-attachments/assets/e4ed0d61-220b-46a6-bc16-b4e36cb7e2e5" />
 
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-20 at 16 12 36" src="https://github.com/user-attachments/assets/9e49b536-ce4d-497a-a203-77fb1652515c" />
 
