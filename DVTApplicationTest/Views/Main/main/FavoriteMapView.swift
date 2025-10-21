@@ -15,8 +15,8 @@ import Foundation
 struct FavoriteMapView: View {
     let favorite: FavoriteLocation
 
-    @State private var cameraPosition: MapCameraPosition
-
+    @State private var region: MKCoordinateRegion
+    @State private var annotations: [IdentifiedAnnotation]
     private var placeDescription: String {
         return String(format: "Lat: %.5f, Lon: %.5f", favorite.lat, favorite.log)
     }
@@ -24,21 +24,18 @@ struct FavoriteMapView: View {
     init(favorite: FavoriteLocation) {
         self.favorite = favorite
         let coordinate = CLLocationCoordinate2D(latitude: favorite.lat, longitude: favorite.log)
-        let mapCamera = MapCamera(centerCoordinate: coordinate, distance: 500, heading:100, pitch: 100)
-        _cameraPosition = State(initialValue: .camera(mapCamera))
+        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        let region = MKCoordinateRegion(center: coordinate, span: span)
+        _region = State(initialValue: region)
+        _annotations = State(initialValue: [
+            IdentifiedAnnotation(title: favorite.name ?? "", coordinate: coordinate)
+        ])
     }
 
     var body: some View {
-        Map(position: $cameraPosition) {
-            Annotation(favorite.name ?? "", coordinate: CLLocationCoordinate2D(latitude: favorite.lat, longitude: favorite.log), anchor: .center) {
-                ZStack {
-                    Circle().fill(.blue).frame(width: 14, height: 14)
-                    Circle().stroke(.white, lineWidth: 2).frame(width: 14, height: 14)
-                }
-                .shadow(radius: 2)
-            }
+        Map(coordinateRegion: $region, annotationItems: annotations) { item in
+            MapMarker(coordinate: item.coordinate, tint: .blue)
         }
-        .mapStyle(.standard)
         .navigationTitle(favorite.name ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
@@ -56,4 +53,3 @@ struct FavoriteMapView: View {
         }
     }
 }
-
