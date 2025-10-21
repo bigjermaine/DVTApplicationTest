@@ -8,10 +8,6 @@
 
 import Foundation
 
-import Foundation
-
-
-
 // MARK: - Common Models
 struct WeatherData: Codable, Identifiable {
     let id = UUID()
@@ -189,10 +185,6 @@ extension Array where Element == WeatherData {
             return (date, DailyForecast(day: weekday, minTemp: Int(minTemp), maxTemp: Int(maxTemp), icon: icon))
         }
 
-       print(summaries
-        .sorted { $0.date < $1.date }
-        .suffix(5)
-        .map { $0.forecast })
         return summaries
             .sorted { $0.date < $1.date }
             .suffix(5)
