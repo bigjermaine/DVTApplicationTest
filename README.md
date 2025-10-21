@@ -4,7 +4,7 @@ A lightweight iOS application built with SwiftUI to demonstrate the MVVM (Model�
 no third-party dependencies.
 
 Overview
-This project emphasizes clean architecture and modern SwiftUI techniques for iOS 17 and above. It integrates UserDefaults for quick, transient data (e.g favorites) and Core Data for structured, persistent storage of entities.
+This project emphasizes clean architecture and modern SwiftUI techniques for iOS 16 and above. It integrates UserDefaults for quick, transient data (e.g favorites) and Core Data for structured, persistent storage of entities.
 
 Features
 * MVVM Architecture — Clear separation of concerns between:
@@ -40,7 +40,7 @@ Additional Features
 
 Technical Requirements
 Tool	Version
-iOS	17.0+
+iOS	16.0+
 Xcode	15.0+
 Swift	5.9+
 No additional frameworks or SDKs are required.
