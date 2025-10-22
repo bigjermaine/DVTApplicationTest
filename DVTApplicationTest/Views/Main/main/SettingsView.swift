@@ -4,23 +4,35 @@
 //
 //  Created by Daniel Jermaine on 18/10/2025.
 
-
 import SwiftUI
 import UserNotifications
 import Combine
 import Foundation
 
+/// A settings screen for managing notification permissions, haptics, sound effects,
+/// and the app's design style. Persists preferences using `@AppStorage` and reacts
+/// to system notification authorization changes.
 struct SettingsView: View {
    
+    /// Whether haptic feedback is enabled throughout the app. Stored in AppStorage.
     @AppStorage(SettingsKeys.hapticsEnabled) private var hapticsEnabled: Bool = false
+    /// The selected design/appearance style (system, light, dark), persisted via AppStorage.
     @AppStorage(SettingsKeys.designStyle) private var designStyle: String = DesignStyle.system.rawValue
+    /// Whether sound effects are enabled in the app. Stored in AppStorage.
     @AppStorage(SettingsKeys.soundEnabled) private var soundEnabled: Bool = false
+    /// Environment view model used to broadcast UI updates when design style changes.
     @EnvironmentObject var vm: WeatherManagerViewModel
+    /// Convenience flag indicating if notifications are currently authorized in any allowed mode.
     @State private var notificationsEnabled: Bool = false
+    /// Cached notification authorization status from UNUserNotificationCenter settings.
     @State private var notificationAuthStatus: UNAuthorizationStatus = .notDetermined
+    /// True while the app is fetching the latest notification settings.
     @State private var isLoadingNotificationStatus = true
+    /// Shared notification manager responsible for querying settings and scheduling reminders.
     @StateObject private var notificationManager = NotificationManager.shared
 
+    /// Builds the settings UI, including sections for notifications, haptics, sound, and design.
+    /// Also wires up lifecycle tasks to refresh notification status and handle design changes.
     var body: some View {
         NavigationStack {
             Form {
@@ -80,6 +92,7 @@ struct SettingsView: View {
         }
     }
 
+    /// Human-readable text describing the current notification authorization state.
     private var notificationStatusText: String {
         switch notificationAuthStatus {
         case .authorized, .provisional, .ephemeral:
@@ -93,6 +106,7 @@ struct SettingsView: View {
         }
     }
 
+    /// Color used to visually indicate the notification authorization state.
     private var notificationStatusColor: Color {
         switch notificationAuthStatus {
         case .authorized, .provisional, .ephemeral:
@@ -106,6 +120,10 @@ struct SettingsView: View {
         }
     }
 
+    /// Refreshes the current notification authorization status.
+    /// - Important: Runs on the main actor to keep UI state consistent.
+    /// - Updates `notificationAuthStatus`, `notificationsEnabled`, and loading state.
+    /// - If notifications are enabled, attempts to schedule a daily weather reminder.
     @MainActor
     private func refreshNotificationStatus() async {
         isLoadingNotificationStatus = true
@@ -120,10 +138,13 @@ struct SettingsView: View {
         isLoadingNotificationStatus = false
     }
 
+    /// Opens the app's page in the system Settings app so the user can adjust permissions.
     private func openAppSettings() {
         notificationManager.openAppSettings()
     }
 
+    /// Notifies dependent views that the design style has changed so they can update.
+    /// - Parameter newValue: The newly selected design style raw value.
     @MainActor
     private func handleDesignStyleChange(_ newValue: String) {
      
@@ -139,3 +160,4 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
 }
+

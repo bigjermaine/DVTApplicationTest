@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+
 struct FavoriteLocation: Identifiable, Codable, Hashable {
     var id: UUID = UUID()
     var name: String?
