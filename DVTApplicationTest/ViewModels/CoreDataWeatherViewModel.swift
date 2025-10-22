@@ -3,21 +3,48 @@ import SwiftUI
 import CoreData
 import Combine
 
+/// A main-actor isolated view model that wraps Core Data operations for weather forecasts.
+/// Responsible for loading, mapping, sorting, and persisting `DailyForecast` data via `WeatherEntity`.
+/// Provides a simple API for replacing, adding, and deleting forecasts while keeping published state in sync.
 @MainActor
 final class CoreDataWeatherViewModel: ObservableObject {
+    /// Raw Core Data entities fetched from the persistent store.
     @Published var savedEntity: [WeatherEntity] = []
+    /// App-facing, mapped forecasts derived from Core Data, sorted for display.
     @Published var dailyForecasts: [DailyForecast] = []
-
+    
+    /// The Core Data persistent container used for all CRUD operations.
+    /// Can be injected for testing; defaults to a container named "WeatherCoreData".
     let container: NSPersistentContainer
-
-    init(containerName: String = "WeatherCoreData") {
-        self.container = NSPersistentContainer(name: containerName)
-        self.container.loadPersistentStores { _, _ in }
+    
+    /// Initializes the view model.
+    /// - Parameters:
+    ///   - container: Optional persistent container to use (useful for tests). If `nil`, a default container named "WeatherCoreData" is created.
+    ///   - useInMemory: When `true` and using the default container, configures an in-memory store for ephemeral testing.
+    /// On initialization, the persistent stores are loaded (best-effort) and an initial fetch is performed.
+    init(container: NSPersistentContainer? = nil, useInMemory: Bool = false) {
+        if let container = container {
+            self.container = container
+        } else {
+            // Default container
+            self.container = NSPersistentContainer(name: "WeatherCoreData")
+            if useInMemory {
+                let description = NSPersistentStoreDescription()
+                description.type = NSInMemoryStoreType
+                self.container.persistentStoreDescriptions = [description]
+            }
+            self.container.loadPersistentStores { _, error in
+                if let error = error {
+                    print("CoreData init error: \(error)")
+                }
+            }
+        }
         fetchSavedWeatherInfos()
     }
     
-    
-    
+    /// Loads `WeatherEntity` objects from Core Data, maps them to `DailyForecast`, and sorts them by weekday relative to today.
+    /// Sorting attempts to interpret localized weekday names (full, short, very short) and order them from today forward.
+    /// Updates both `savedEntity` and `dailyForecasts`.
     func fetchSavedWeatherInfos() {
         let request = NSFetchRequest<WeatherEntity>(entityName: "WeatherEntity")
         request.sortDescriptors = [NSSortDescriptor(key: "day", ascending: false)]
@@ -37,7 +64,7 @@ final class CoreDataWeatherViewModel: ObservableObject {
             let fullWeekdays = formatter.weekdaySymbols?.map { $0.lowercased() } ?? []
             let shortWeekdays = formatter.shortWeekdaySymbols?.map { $0.lowercased() } ?? []
             let veryShortWeekdays = formatter.veryShortWeekdaySymbols?.map { $0.lowercased() } ?? []
-
+            
             func weekdayIndex(from name: String) -> Int? {
                 let key = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
                 if let idx = fullWeekdays.firstIndex(of: key) { return idx + 1 }
@@ -46,72 +73,68 @@ final class CoreDataWeatherViewModel: ObservableObject {
                 return nil
             }
             let sorted = forecasts.sorted { a, b in
-                let aIdx = weekdayIndex(from: a.day) ?? 8
-                let bIdx = weekdayIndex(from: b.day) ?? 8
+                     let aIdx = weekdayIndex(from: a.day) ?? 8
+                     let bIdx = weekdayIndex(from: b.day) ?? 8
 
-                func offset(_ idx: Int) -> Int {
-                    guard (1...7).contains(idx) else { return Int.max }
-                    let zeroBased = (idx - 1)
-                    let todayZero = (todayWeekday - 1)
-                    return (zeroBased - todayZero + 7) % 7
-                }
+                     func offset(_ idx: Int) -> Int {
+                         guard (1...7).contains(idx) else { return Int.max }
+                         let zeroBased = (idx - 1)
+                         let todayZero = (todayWeekday - 1)
+                         return (zeroBased - todayZero + 7) % 7
+                     }
 
-                return offset(aIdx) < offset(bIdx)
-            }
+                     return offset(aIdx) < offset(bIdx)
+                 }
 
-            dailyForecasts = sorted
-        } catch {
-            
+                 dailyForecasts = sorted
+             } catch {
+                 
+             }
+         }
+    /// Maps Core Data entities to `DailyForecast` models with a simple lexicographic day sort.
+    /// - Parameter entities: The entities to map.
+    /// - Returns: Mapped forecasts, optionally sorted by day string.
+    private func mapEntitiesToForecasts(_ entities: [WeatherEntity]) -> [DailyForecast] {
+        let forecasts = entities.compactMap {
+            DailyForecast(day: $0.day ?? "",
+                          minTemp: Int($0.minTep),
+                          maxTemp: Int($0.maxTemp),
+                          icon: $0.icon ?? "")
         }
+
+        // Optional sorting logic from your original
+        return forecasts.sorted(by: { $0.day < $1.day })
     }
 
+    /// Inserts or updates a single forecast by day identifier, then saves and refreshes the in-memory lists.
+    /// - Parameter item: The forecast to upsert.
     func addWeather(_ item: DailyForecast) {
+        let context = container.viewContext
         let request = NSFetchRequest<WeatherEntity>(entityName: "WeatherEntity")
         request.predicate = NSPredicate(format: "day == %@", item.day)
+
         do {
-            let context = container.viewContext
             if let existing = try context.fetch(request).first {
-                var didChange = false
-                let newMax = Int32(item.maxTemp)
-                let newMin = Int32(item.minTemp)
-                let newIcon = item.icon
-                let newDay = item.day
-
-                if existing.maxTemp != newMax { existing.maxTemp = newMax; didChange = true }
-                if existing.minTep != newMin { existing.minTep = newMin; didChange = true }
-                if existing.icon != newIcon { existing.icon = newIcon; didChange = true }
-                if existing.day != newDay { existing.day = newDay; didChange = true }
-
-                if didChange {
-                    save()
-                    if let idx = dailyForecasts.firstIndex(where: { $0.day == newDay }) {
-                        dailyForecasts[idx] = DailyForecast(day: newDay, minTemp: Int(newMin), maxTemp: Int(newMax), icon: newIcon)
-                    }
-                }
+                existing.day = item.day
+                existing.maxTemp = Int32(item.maxTemp)
+                existing.minTep = Int32(item.minTemp)
+                existing.icon = item.icon
             } else {
-                let newWeather = WeatherEntity(context: container.viewContext)
-                newWeather.maxTemp = Int32(item.maxTemp)
-                newWeather.minTep = Int32(item.minTemp)
-                newWeather.icon = item.icon
-                newWeather.day = item.day
-                save()
-                if dailyForecasts.contains(where: { $0.day == item.day }) == false {
-                    dailyForecasts.append(item)
-                }
+                let new = WeatherEntity(context: context)
+                new.day = item.day
+                new.maxTemp = Int32(item.maxTemp)
+                new.minTep = Int32(item.minTemp)
+                new.icon = item.icon
             }
-        } catch {
-            let newWeather = WeatherEntity(context: container.viewContext)
-            newWeather.maxTemp = Int32(item.maxTemp)
-            newWeather.minTep = Int32(item.minTemp)
-            newWeather.icon = item.icon
-            newWeather.day = item.day
             save()
-            if dailyForecasts.contains(where: { $0.day == item.day }) == false {
-                dailyForecasts.append(item)
-            }
+            fetchSavedWeatherInfos()
+        } catch {
+            print("Add error: \(error)")
         }
     }
 
+    /// Replaces all saved forecasts with the provided collection, then saves and refreshes.
+    /// - Parameter forecasts: The new set of forecasts to persist.
     func replaceAllSavedForecasts(with forecasts: [DailyForecast]) {
         deleteAllSavedForecasts()
         for item in forecasts {
@@ -122,29 +145,30 @@ final class CoreDataWeatherViewModel: ObservableObject {
             entity.minTep = Int32(item.minTemp)
         }
         save()
-        if dailyForecasts.isEmpty {
-            dailyForecasts = forecasts
-            fetchSavedWeatherInfos()
-        }
+        fetchSavedWeatherInfos()
     }
 
+    /// Deletes all `WeatherEntity` records using a batch delete, clears in-memory arrays, and saves the context.
     func deleteAllSavedForecasts() {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "WeatherEntity")
-        let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: "WeatherEntity")
+        let delete = NSBatchDeleteRequest(fetchRequest: fetch)
         do {
-            try container.viewContext.execute(batchDelete)
+            try container.viewContext.execute(delete)
             try container.viewContext.save()
         } catch {
-            // ignore
+            print("Delete error: \(error)")
         }
         savedEntity.removeAll()
+        dailyForecasts.removeAll()
     }
 
+    /// Saves the current view context. Errors are logged to the console in debug builds.
     func save() {
         do {
             try container.viewContext.save()
         } catch {
-            // ignore
+            print("Save error: \(error)")
         }
     }
 }
+

@@ -23,7 +23,6 @@ final class WeatherStateStorageTests: XCTestCase {
     }
     
     override func tearDown() {
-        
         testUserDefaults.removePersistentDomain(forName: "WeatherStateStorageTests")
         testUserDefaults.synchronize()
         sut = nil

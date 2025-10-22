@@ -3,18 +3,30 @@ import UserNotifications
 import SwiftUI
 import Combine
 
+/// A main-actor isolated notification manager that wraps `UNUserNotificationCenter`.
+/// Exposes authorization status, requests permissions, schedules/cancels reminders,
+/// and provides a single shared instance for app-wide use.
 @MainActor
 final class NotificationManager: ObservableObject {
+    /// Shared singleton instance for use across the app.
     static let shared = NotificationManager()
 
+    /// Current notification authorization status, updated after permission requests or settings refresh.
+    /// Exposed as read-only to observers.
     @Published private(set) var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
+    /// Initializes the manager and immediately attempts to request authorization on a background task.
+    /// Use `NotificationManager.shared` to access the singleton.
     private init() {
         Task {
             await requestAuthorization()
         }
     }
 
+    /// Requests user authorization for notifications with the given options.
+    /// - Parameter options: Authorization options (defaults to alerts, badges, and sounds).
+    /// - Returns: `true` if permissions were granted; otherwise `false`.
+    /// Also updates `authorizationStatus` with the most recent settings.
     func requestAuthorization(options: UNAuthorizationOptions = [.alert, .badge, .sound]) async -> Bool {
         let center = UNUserNotificationCenter.current()
         do {
@@ -28,6 +40,8 @@ final class NotificationManager: ObservableObject {
         }
     }
 
+    /// Retrieves the current notification settings and updates `authorizationStatus`.
+    /// - Returns: The current `UNNotificationSettings`.
     func currentSettings() async -> UNNotificationSettings {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
@@ -35,6 +49,12 @@ final class NotificationManager: ObservableObject {
         return settings
     }
 
+    /// Schedules a repeating daily notification reminding the user to check the weather.
+    /// Prevents duplicates by checking pending requests for the same identifier.
+    /// - Parameters:
+    ///   - hour: The hour component for the reminder (24h clock). Defaults to 8.
+    ///   - minute: The minute component for the reminder. Defaults to 0.
+    /// - Throws: Propagates errors thrown by `UNUserNotificationCenter.add(_:)`.
     func scheduleDailyWeatherReminder(hour: Int = 8, minute: Int = 0) async throws {
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests()
@@ -64,17 +84,18 @@ final class NotificationManager: ObservableObject {
        
     }
 
-  
+    /// Cancels a pending notification with the specified identifier.
+    /// - Parameter identifier: The identifier of the scheduled request to remove.
     func cancelNotification(identifier: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
     }
 
-   
+    /// Cancels all pending notification requests for the app.
     func cancelAllPendingNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 
-  
+    /// Opens the app's settings page in the Settings app to allow the user to adjust notification permissions.
     func openAppSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
         UIApplication.shared.open(url)

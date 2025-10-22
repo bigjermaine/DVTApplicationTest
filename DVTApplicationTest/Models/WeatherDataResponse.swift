@@ -127,56 +127,55 @@ extension Array where Element == WeatherData {
             .map { $0.forecast }
     }
 }
-
-
 extension Array where Element == WeatherData {
     func nextFiveDays(timezoneOffsetSeconds: Int) -> [DailyForecast] {
         let tz = TimeZone(secondsFromGMT: timezoneOffsetSeconds) ?? .gmt
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = tz
-
-      
-        let nowLocal = Date().addingTimeInterval(TimeInterval(timezoneOffsetSeconds))
-
-       
+        
+        let now = Date()
+        let nowLocal = now.addingTimeInterval(TimeInterval(timezoneOffsetSeconds))
+        let todayStart = cal.startOfDay(for: nowLocal)
+        
+        // Filter for forecasts AFTER today
         let upcoming = self.filter { item in
             guard let dt = item.dt else { return false }
-            let local = Date(timeIntervalSince1970: TimeInterval(dt) + TimeInterval(timezoneOffsetSeconds))
-            return local >= nowLocal
+            let localDate = Date(timeIntervalSince1970: TimeInterval(dt))
+                .addingTimeInterval(TimeInterval(timezoneOffsetSeconds))
+            return localDate > todayStart
         }
-
-      
+        
+        // Group by unique day
         let grouped = Dictionary(grouping: upcoming) { item -> Date in
-            let local = Date(timeIntervalSince1970: TimeInterval(item.dt ?? 0) + TimeInterval(timezoneOffsetSeconds))
-            let comps = cal.dateComponents([.year, .month, .day], from: local)
-            return cal.date(from: comps)!
+            let localDate = Date(timeIntervalSince1970: TimeInterval(item.dt ?? 0))
+                .addingTimeInterval(TimeInterval(timezoneOffsetSeconds))
+            return cal.startOfDay(for: localDate)
         }
-
-        // Create summaries per day
+        
+        // Build day summaries
         let summaries: [(date: Date, forecast: DailyForecast)] = grouped.compactMap { (date, items) in
-          
-
             let minTemp = items.compactMap {
                 if let v = $0.minCelsius { return Double(v) }
                 if let k = $0.main?.tempMin { return k - 273.15 }
                 return nil
             }.min() ?? 0
-
+            
             let maxTemp = items.compactMap {
                 if let v = $0.maxCelsius { return Double(v) }
                 if let k = $0.main?.tempMax { return k - 273.15 }
                 return nil
             }.max() ?? 0
-
+            
+            // Dominant weather condition
             let conditionCounts = Dictionary(grouping: items.compactMap { $0.weather?.first?.main.lowercased() }) { $0 }
                 .mapValues(\.count)
             let dominantCondition = conditionCounts.max(by: { $0.value < $1.value })?.key ?? "clear"
-
+            
             let icon: String
             if dominantCondition.contains("rain") { icon = "rain" }
             else if dominantCondition.contains("cloud") { icon = "partlysunny" }
             else { icon = "clear" }
-
+            
             let df = DateFormatter()
             df.timeZone = tz
             df.dateFormat = "EEEE"
@@ -184,10 +183,16 @@ extension Array where Element == WeatherData {
             
             return (date, DailyForecast(day: weekday, minTemp: Int(minTemp), maxTemp: Int(maxTemp), icon: icon))
         }
-
-        return summaries
-            .sorted { $0.date < $1.date }
-            .suffix(5)
+        .sorted(by: { $0.date < $1.date })
+        
+        // 🔄 Rotate so we start from tomorrow (skip today if present)
+        guard let firstFuture = summaries.first?.date else { return [] }
+        let ordered = summaries
+            .sorted { lhs, rhs in lhs.date < rhs.date }
+            .drop { $0.date <= todayStart } // skip today
+            .prefix(5)
             .map { $0.forecast }
+        print(ordered)
+        return ordered
     }
 }
