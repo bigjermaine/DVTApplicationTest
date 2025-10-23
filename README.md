@@ -1,81 +1,140 @@
 DVTApplicationTest
-A lightweight iOS application built with SwiftUI to demonstrate the MVVM (Model–View–ViewModel) architectural pattern. It showcases best practices in reactive data binding, persistence, and Swift concurrency using native Apple frameworks.
+A lightweight iOS application built with SwiftUI, demonstrating the MVVM (Model–View–ViewModel) architectural pattern and showcasing best practices in reactive data binding, persistence, and Swift concurrency — all using native Apple frameworks with no third-party dependencies.
 
-no third-party dependencies.
+🧩 Project Structure
 
-Overview
-This project emphasizes clean architecture and modern SwiftUI techniques for iOS 16 and above. It integrates UserDefaults for quick, transient data (e.g favorites) and Core Data for structured, persistent storage of entities.
+DVTApplicationTest/
+├── Main/
+│   ├── DVTApplicationTestApp.swift
+│
+├── Assets/
+│   ├── Images.xcassets
+│   ├── Colors.xcassets
+│
+├── Models/
+│   ├── User.swift
+│   ├── WeatherData.swift
+│   ├── City.swift
+│   ├── Clouds.swift
+│
+├── ViewModels/
+│   ├── WeatherManagerViewModel.swift
+│   ├── FavouriteViewModel.swift
+│   ├── CoreDataWeatherViewModel.swift
+│
+├── Views/
+│   ├── Components/
+│   ├── Cells/
+│   ├── CustomViews/
+│   ├── Main/
+│       ├── HomeView.swift
+│       ├── FavoriteMapView.swift
+│       ├── SettingsView.swift
+│       ├── FavouriteView.swift
+│       ├── TabbarView.swift
+│
+├── Services/
+│   ├── NetworkManager.swift
+│   ├── AuthManager.swift
+│   ├── SoundManager.swift
+│
+├── CoreData/
+│   ├── CoreDataStack.swift
+│   ├── Entities/
+│
+├── Extensions/
+│   ├── Double.swift
+│   ├── Int.swift
+│
+├── Protocols/
+│   ├── NetworkServiceProtocol.swift
+│   ├── StorageProtocol.swift
 
-Features
-* MVVM Architecture — Clear separation of concerns between:
-    * Model: Defines entities and Core Data schemas.
-    * ViewModel: Manages app logic, persistence, and state updates.
-    * View: Declarative SwiftUI UI bound to observable state.
-* SwiftUI Interface
-    * Built entirely with SwiftUI components (lists, forms, navigation).
-    * Uses NavigationStack, async/await, and @Observable for reactive updates.
-* Local Data Storage
-    * UserDefaults: For simple key-value persistence such as favorite weather states.
-    * Core Data: For storing structured data and managing entity relationships.
-* Modern iOS 17 APIs
-    * Swift Concurrency (async/await)
-    * New @Observable property wrapper for real-time UI updates.
-    * Native navigation with NavigationStack.
-* No External SDKs
-    * 100% native Swift and Apple frameworks for maximum maintainability and portability.
-* Unit Tests
-    * Includes tests for WeatherStateStorageManager to validate data persistence and retrieval logic.
+🏗️ Overview
+DVTApplicationTest emphasizes clean architecture and modern SwiftUI techniques for iOS 16+. It integrates:
+* UserDefaults — for quick, transient data (e.g., favorite weather locations)
+* Core Data — for structured, persistent storage of entities
+This project is ideal for demonstrating real-world SwiftUI development, local data persistence, and reactive UI updates.
 
-Architecture Diagram
-Data Flow:
+🚀 Key Features
+MVVM Architecture
+A clean separation of concerns:
+* Model — Defines entities and Core Data schemas.
+* ViewModel — Manages app logic, persistence, and state updates.
+* View — Declarative SwiftUI UI bound to observable state.
+SwiftUI Interface
+* Fully built with SwiftUI components (Lists, Forms, Navigation).
+* Uses NavigationStack, async/await, and @Observable for real-time reactivity.
+Local Data Storage
+* UserDefaults for simple key-value persistence (e.g., favorites, settings).
+* Core Data for structured data and entity relationship management.
+Modern iOS 17 APIs
+* Swift Concurrency (async/await)
+* @Observable for dynamic UI binding.
+* NavigationStack for native, declarative navigation.
+No External SDKs
+* 100% native Swift and Apple frameworks
+* No third-party dependencies — ensuring maintainability, simplicity, and portability.
+Unit Tests
+* Includes tests for WeatherStateStorageManager to validate data persistence and retrieval logic.
+
+🔄 Architecture Diagram — Data Flow
 1. View initializes and binds to a ViewModel instance.
-2. ViewModel fetches or saves data through Core Data or UserDefaults.
-3. User interactions trigger state changes in ViewModel.
-4. Updated data automatically reflects in the View via SwiftUI bindings.
+2. ViewModel fetches or saves data via Core Data or UserDefaults.
+3. User actions trigger logic in the ViewModel, updating observable state.
+4. SwiftUI automatically reflects state changes in the View.
 
-Additional Features 
-1) Haptic effects
-2) sound settings
-3) background change to forest or sea 
+🎧 Additional Features
+* Haptic feedback integration for tactile interactions
+* Custom sound effects managed through SoundManager
+* Dynamic background switching (e.g., forest or sea themes)
 
-Technical Requirements
+⚙️ Technical Requirements
 Tool	Version
 iOS	16.0+
 Xcode	15.0+
 Swift	5.9+
-No additional frameworks or SDKs are required.
-
-
-
-Installation
+Dependencies	None
+🧱 Installation
 1. Clone the repository    git clone https://github.com/bigjermaine/DVTApplicationTest.git
-2. Open the project   
-3. 
-    * Launch DVTApplicationTest.xcodeproj in Xcode.
-    * Select an iOS 17+ device or simulator.
+2.   
+3. Open the project
+    * Launch DVTApplicationTest.xcodeproj in Xcode
+    * Select an iOS 17+ device or simulator
 4. Build & Run
-    * Press ⌘ + R to compile and run the app.
-    * Core Data permissions are automatically handled in the simulator.
-5. Core Data Setup (optional)
-    * Use Editor → Create NSManagedObject Subclass for any new entities.
-    * Ensure the persistent container is initialized in App.swift.
-  
-Branching Strategy
-* Uses three Git branches to demonstrate real-world branching workflows:
-    * dev → Active development branch for ongoing features and experiments.
-    * staging → Pre-production branch for QA and integration testing.
-    * main → Stable, production-ready code.
-* This setup reflects best practices for collaborative version control and continuous integration.
+    * Press ⌘ + R to compile and run the app
+    * Core Data permissions are automatically handled in the simulator
+5. Optional: Core Data Setup
+    * Use Editor → Create NSManagedObject Subclass for new entities
+    * Ensure the persistent container is initialized in App.swift
 
-Usage
-1. Launch the app and allow Location Access.
-2. Switch simulator locations to observe weather data updates.
-3. Tap the heart icon to add a location to favorites (stored via UserDefaults).
-4. Modify settings to toggle sound, haptics, and background options.
-5. View offline-stored weather data when network access is unavailable
+🌿 Branching Strategy
+The repository uses three branches to mirror real-world CI/CD workflows:
+Branch	Purpose
+dev	Active development and feature experimentation
+staging	Pre-production QA and integration testing
+main	Stable, production-ready release
+This setup demonstrates collaborative version control and supports automated testing or continuous integration pipelines.
 
+🧭 Usage
+1. Launch the app and grant Location Access
+2. Switch simulator location to test weather data updates
+3. Tap the ❤️ icon to add a city to favorites (stored via UserDefaults)
+4. Modify Settings to toggle sound, haptics, and background themes
+5. View offline weather data when network access is unavailable
 
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-20 at 16 12 28" src="https://github.com/user-attachments/assets/e4ed0d61-220b-46a6-bc16-b4e36cb7e2e5" />
+🧪 Testing
+To run tests:
 
-<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-20 at 16 12 36" src="https://github.com/user-attachments/assets/9e49b536-ce4d-497a-a203-77fb1652515c" />
+⌘ + U
+Includes unit tests for:
+* Data persistence (Core Data + UserDefaults)
+* ViewModel logic and state transitions
 
+📚 Learning Outcomes
+DVTApplicationTest demonstrates:
+* Implementing MVVM cleanly in SwiftUI
+* Integrating Core Data and UserDefaults
+* Handling asynchronous data flows with async/await
+* Managing state reactively with SwiftUI bindings
+* Structuring an iOS app for scalability and maintainability
