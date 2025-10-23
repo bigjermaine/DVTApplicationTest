@@ -3,9 +3,8 @@ A lightweight iOS application built with SwiftUI, demonstrating the MVVM (Model�
 
 🧩 Project Structure
 
-<img width="780" height="761" alt="Screenshot 2025-10-23 at 10 26 57" src="https://github.com/user-attachments/assets/eb3c4b0c-7711-4cd4-b7aa-294e32229671" />
 
-
+<img width="684" height="739" alt="Screenshot 2025-10-23 at 10 27 53" src="https://github.com/user-attachments/assets/fc3ae961-7183-4b0d-ab8d-34f9eb95cf9d" />
 
 
 🏗️ Overview
