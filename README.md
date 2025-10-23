@@ -50,6 +50,8 @@ DVTApplicationTest/
 │   ├── NetworkServiceProtocol.swift
 │   ├── StorageProtocol.swift
 
+
+
 🏗️ Overview
 DVTApplicationTest emphasizes clean architecture and modern SwiftUI techniques for iOS 16+. It integrates:
 * UserDefaults — for quick, transient data (e.g., favorite weather locations)
