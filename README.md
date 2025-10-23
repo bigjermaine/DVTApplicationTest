@@ -2,53 +2,9 @@ DVTApplicationTest
 A lightweight iOS application built with SwiftUI, demonstrating the MVVM (Model–View–ViewModel) architectural pattern and showcasing best practices in reactive data binding, persistence, and Swift concurrency — all using native Apple frameworks with no third-party dependencies.
 
 🧩 Project Structure
+![Uploading MVVM Architecture for iOS App.png…]()
 
-DVTApplicationTest/
-├── Main/
-│   ├── DVTApplicationTestApp.swift
-│
-├── Assets/
-│   ├── Images.xcassets
-│   ├── Colors.xcassets
-│
-├── Models/
-│   ├── User.swift
-│   ├── WeatherData.swift
-│   ├── City.swift
-│   ├── Clouds.swift
-│
-├── ViewModels/
-│   ├── WeatherManagerViewModel.swift
-│   ├── FavouriteViewModel.swift
-│   ├── CoreDataWeatherViewModel.swift
-│
-├── Views/
-│   ├── Components/
-│   ├── Cells/
-│   ├── CustomViews/
-│   ├── Main/
-│       ├── HomeView.swift
-│       ├── FavoriteMapView.swift
-│       ├── SettingsView.swift
-│       ├── FavouriteView.swift
-│       ├── TabbarView.swift
-│
-├── Services/
-│   ├── NetworkManager.swift
-│   ├── AuthManager.swift
-│   ├── SoundManager.swift
-│
-├── CoreData/
-│   ├── CoreDataStack.swift
-│   ├── Entities/
-│
-├── Extensions/
-│   ├── Double.swift
-│   ├── Int.swift
-│
-├── Protocols/
-│   ├── NetworkServiceProtocol.swift
-│   ├── StorageProtocol.swift
+
 🏗️ Overview
 DVTApplicationTest emphasizes clean architecture and modern SwiftUI techniques for iOS 16+. It integrates:
 * UserDefaults — for quick, transient data (e.g., favorite weather locations)
