@@ -53,8 +53,8 @@ Swift	5.9+
 Dependencies	None
 🧱 Installation
 1. Clone the repository    git clone https://github.com/bigjermaine/DVTApplicationTest.git
-2.   
-3. Open the project
+2.   Open the project
+3. 
     * Launch DVTApplicationTest.xcodeproj in Xcode
     * Select an iOS 17+ device or simulator
 4. Build & Run
